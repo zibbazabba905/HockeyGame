@@ -6,6 +6,13 @@ Hockey 0.13.1
 -started 2/Feb/22
 pong framework to build my hockey game on top of
 
+codesandbox.io demo
+https://x07wk.sse.codesandbox.io/
+https://codesandbox.io/s/pong-test-for-hockey-13-working-x07wk?file=/server.js
+demo notes: literally only two instances of this can be played against eachother at a time currently, but it should reset itself if the "server" stays running
+I have NO idea how/why it's hosted but there's a lot of lag and weird timing issues (the ball moves way faster than it does on localhost).
+
+
 codesandbox requires every file to be named index.js in order to run
 tried converting js files to modules, but require(module) works in node, but does not work in javascript or html so they cannot be shared between them. 
 
