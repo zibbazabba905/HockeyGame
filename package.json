@@ -1,0 +1,16 @@
+{
+  "name": "hockey13.1",
+  "version": "0.13.1",
+  "description": "multiplayer step of pong hockey",
+  "main": "server.js",
+  "scripts": {
+    "test": "asdf",
+    "start": "node server.js"
+  },
+  "author": "Zibbazabba905#3485",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "socket.io": "^4.4.1"
+  }
+}

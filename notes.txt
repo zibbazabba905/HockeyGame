@@ -1,0 +1,26 @@
+started 2/Feb/22
+
+Hockey 0.13.1 
+
+pong framework to build my hockey game on top of
+
+
+codesandbox requires every file to be named index.js in order to run
+tried converting js files to modules, but require(module) works in node, but does not work in javascript or html so they cannot be shared between them. 
+
+top folder:
+(server.js)index.js - the server javascript run in node
+rink.js - rink positons
+vector2d.js - math stuff from EKW
+
+public folder:
+index.html - html page
+index.js - main javascript
+calculationFunctions - hitbox stuff
+drawingFunctions - my first module, I should convert it to a class and import/export format
+gameState - main game state machine
+overlay.js - info/text boxes
+puck.js - the puck
+rink.js - the background and rink positions. all notes for full rink drawing
+unit.js - the paddles
+vector2d.js - math stuff from EKW
