@@ -22,7 +22,7 @@ module.exports = class Rink{
     //Goal is 3.33ft(40inches) by 6 ft 16 x 30
 
     //TURN THESE TO VEC2D SYSTEM
-    this.pongLineWidth = 5
+    this.pongLineWidth = 5;
     this.length = 1000;
     this.width = 425;
     this.center= {
