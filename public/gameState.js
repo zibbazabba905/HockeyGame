@@ -20,10 +20,9 @@ class GameState{
         //this.starMenuStart();
         console.log("beginMenuState")
         this.toggleControl.restart = false;
-        aDef.pos.y = rink.center.y
-        hDef.pos.y = rink.center.y
-        aOff.pos.y = rink.center.y
-        hOff.pos.y = rink.center.y
+        for (let unit of unitArray){
+          unit.pos.y = rink.center.y;
+        }
         overlay.winner = null;        
       break;
 

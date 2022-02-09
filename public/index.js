@@ -1,10 +1,10 @@
-let canvas = document.getElementById("myCanvas");
-canvas.style.cursor = "none"
-canvas.style.background = "black"
-let ctx = canvas.getContext("2d");
-canvas.c = {x:canvas.width/2, y:canvas.height/2} 
-canvas.buffer = {x:50, y:50}
-ctx.save()
+const canvas = document.getElementById("myCanvas");
+canvas.style.cursor = "none";
+canvas.style.background = "black";
+const ctx = canvas.getContext("2d");
+canvas.c = {x:canvas.width/2, y:canvas.height/2}; 
+canvas.buffer = {x:50, y:50};
+ctx.save();
 
 
 
@@ -18,10 +18,10 @@ document.addEventListener("keyup", keyUpHandler, false);
 //canvas.addEventListener('mousedown', mouseDown);
 
 function keyDownHandler(e) {
-  keys[e.key] = true
+  keys[e.key] = true;
 }
 function keyUpHandler(e) {
-  keys[e.key] = false
+  keys[e.key] = false;
 }
 /*
 function mouseMoveHandler(e) {
@@ -39,7 +39,7 @@ function mouseUp(e){
   }
 }
 */
-let keys = []
+const keys = [];
 
 socket.on("notification", (e) =>{
   console.log(e);
@@ -47,31 +47,33 @@ socket.on("notification", (e) =>{
 
 socket.on("identify", (e) =>{
   id = e;
-  identify(id)})
+  identify(id);
+});
 
 function identify(id){
+  //REWRITE
   if (id === 0){
-    hDef.player = true
-    hOff.player = true
-    aDef.player = false
-    aOff.player = false
+    hDef.player = true;
+    hOff.player = true;
+    aDef.player = false;
+    aOff.player = false;
   }
   else if (id === 1){
-    aDef.player = true
-    aOff.player = true
-    hDef.player = false
-    hOff.player = false
+    aDef.player = true;
+    aOff.player = true;
+    hDef.player = false;
+    hOff.player = false;
   }
   else{
-    return
-  }
-}
+    return;
+  };
+};
 socket.on("playerLeft",(e)=>{
   if (e<id){
     id--;
     identify(id);
-  }
-})
+  };
+});
 
 
 
@@ -93,37 +95,37 @@ socket.on("playerPos", (e)=>{
     hDef.pos.y = e.y;
   }
   else{
-    return
-  }
+    return;
+  };
 });
 
-
+//REWRITE?
 socket.on("scoreUpdate", (e)=>{
-  overlay.homeScore = e.h
-  overlay.awayScore = e.a
-})
+  overlay.homeScore = e.h;
+  overlay.awayScore = e.a;
+});
 
 socket.on("stateChange", (e)=>{
   console.log(e);
   if (e === "startMenu"){
-    gameState.switchState(gameState.state[0])
+    gameState.switchState(gameState.state[0]);
   }
   else if (e === "pongRun"){
-    gameState.switchState(gameState.state[1])  
-    console.log("pongRun")  
+    gameState.switchState(gameState.state[1]);  
+    console.log("pongRun");
   }
   else if (e === "score"){
-    gameState.switchState(gameState.state[2]) 
+    gameState.switchState(gameState.state[2]);
   }
   else if (e === "winState"){
-    gameState.switchState(gameState.state[3])
-  }
-})
+    gameState.switchState(gameState.state[3]);
+  };
+});
 
 socket.on("winUpdate", (e)=>{
   overlay.winner = e;
-  gameState.switchState(gameState.state[3])
-})
+  gameState.switchState(gameState.state[3]);
+});
 
 
 
@@ -131,11 +133,10 @@ socket.on("winUpdate", (e)=>{
 
 
 
-let id
+let id;
 const rink = new Rink();
 const puck = new Puck();
 const overlay = new Overlay();
-const gameState = new GameState();
 
 //nst name = new Unit(playerTeam,clientNumber)
 const hDef = new Defense(true, 0);
@@ -147,16 +148,21 @@ const unitArray = [
   aDef,
   hOff,
   aOff
-  ]
+];
+const gameState = new GameState();
 
-let debugToggle = false
-function debugTest(testThing,time){
-  if (!debugToggle){
-    console.log(testThing);
-    debugToggle=true;
-    setTimeout(()=>{debugToggle = false}, time)
-  }
-}
+
+let pingTimerToggle = false;
+let pong = false;
+let pingTime = 0;
+socket.on("pong", () => {
+  pong = true;
+});
+
+
+
+
+
 
 
 function init(){
@@ -166,7 +172,6 @@ function init(){
 function drawPong(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   gameState.update();
-  debugTest(id, 2000)
 }
 
 

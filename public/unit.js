@@ -12,9 +12,10 @@ class Unit{
     this.teamID = teamID
   }
   get bounds(){
-    let min = new Vec2D(this.pos.x-this.r,this.pos.y-this.height*.5)
-    let max = new Vec2D(this.pos.x+this.r,this.pos.y+this.height*.5)
-    return {min:min,max:max}
+    return {
+      min:new Vec2D(this.pos.x-this.r,this.pos.y-this.height*.5),
+      max:new Vec2D(this.pos.x+this.r,this.pos.y+this.height*.5)
+    }
   }
   pongDraw(){
   //drawSquare(minX,minY,maxX,maxY,fill,width=1,color="black")

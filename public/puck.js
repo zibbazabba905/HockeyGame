@@ -6,9 +6,7 @@ class Puck{
     this.bounceCheck = false
   }
   get bounds(){
-    let min = this.pos.subScalar(this.r)
-    let max = this.pos.addScalar(this.r)
-    return {min:min, max:max}
+    return {min:this.pos.subScalar(this.r), max:this.pos.addScalar(this.r)};
   }
   pongDraw(){
     drawCircle(this.pos.x,this.pos.y,this.r,"white")
