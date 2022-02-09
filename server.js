@@ -14,15 +14,15 @@ const Rink = require("./rink.js");
 const canvas ={
   width: 1100, 
   height:525
-}
+};
 canvas.c = {
   x:canvas.width/2, 
   y:canvas.height/2
-} 
+};
 canvas.buffer = {
   x:50, 
   y:50
-}
+};
 
 server.listen(3000, () => {
   console.log('listening on *:3000');
@@ -35,9 +35,9 @@ io.on('connection', (socket) => {
   let i = allClients.indexOf(socket);
   allClients[i].pos = null;
   allClients[i].restart = false;
-  allClients[i].score = 0
-  socket.emit("identify", i)
-  socket.emit("stateChange", gameState._state)
+  allClients[i].score = 0;
+  socket.emit("identify", i);
+  socket.emit("stateChange", gameState._state);
 
   //if player 1 and player 2 are already in
   if (allClients[1]){
@@ -67,19 +67,19 @@ io.on('connection', (socket) => {
       //if player 1 disconnects
       console.log("player 1 has left");
       io.emit("winUpdate", "Player 2");
-      io.emit("playerLeft", 0)
-      gameState.switchState(gameState.state[3])
+      io.emit("playerLeft", 0);
+      gameState.switchState(gameState.state[3]);
     }
     else if (i === 1){
       //if player 2 disconnects
-      console.log("player 2 has left")
+      console.log("player 2 has left");
       io.emit("winUpdate", "Player 1");
-      io.emit("playerLeft", 1)
-      gameState.switchState(gameState.state[3])
+      io.emit("playerLeft", 1);
+      gameState.switchState(gameState.state[3]);
     }
     else {
       //if waiting player disconnects 
-      io.emit("playerLeft", 2)
+      io.emit("playerLeft", 2);
     }
     allClients.splice(i,1);
   });
@@ -92,68 +92,57 @@ io.on('connection', (socket) => {
   //player controls hitreg, when ball contacts emits what side of the paddle its on
   socket.on("bounce", (right) =>{
     if (right){
-      puck.velocity.x = 5
+      puck.velocity.x = 5;
     }
     else{
-      puck.velocity.x = -5
-    }
-  })
+      puck.velocity.x = -5;
+    };
+  });
 
   //after game is over player 1 and player 1 hit restart
   socket.on("restart",(e)=>{
     allClients[e].restart = true;
-    console.log(allClients[e].id +" Restart")
+    console.log(allClients[e].id +" Restart");
 
   })
 });
 
 //emit score to players
+
 function scoreUpdate(){
   if(allClients[0] && allClients[1]){
-    let h = allClients[0].score
-    let a = allClients[1].score
-    io.emit("scoreUpdate", {h,a})
+    io.emit("scoreUpdate", {h:allClients[0].score, a:allClients[1].score});
   }
   else
     io.emit("scoreUpdate", {h:0,a:0} )
-}
+};
 
 //edge collision for puck
-function edgeCollision(object){
-  if (object.bounds.min.x < rink.bounds.min.x){
-    object.pos.x = rink.bounds.min.x+object.r
-    object.velocity.x = object.velocity.x*-1
-  }
-  else if (object.bounds.max.x > rink.bounds.max.x){
-    object.pos.x = rink.bounds.max.x-object.r
-    object.velocity.x = object.velocity.x*-1
-  }
-  if (object.bounds.min.y < rink.bounds.min.y){
-    object.pos.y = rink.bounds.min.y+object.r
-    object.velocity.y = object.velocity.y*-1
-  }
-  else if (object.bounds.max.y > rink.bounds.max.y){
-    object.pos.y = rink.bounds.max.y-object.r
-    object.velocity.y = object.velocity.y*-1
+const edgeCollision = obj => {
+  for(const axis of ["x", "y"]){
+    if (obj.bounds.min[axis] < rink.bounds.min[axis]){
+      obj.pos[axis] = rink.bounds.min[axis] + obj.r
+      obj.velocity[axis] = obj.velocity[axis] * -1
+    } else if (obj.bounds.max[axis] > rink.bounds.max[axis]){
+      obj.pos[axis] = rink.bounds.max[axis] - obj.r
+      obj.velocity[axis] = obj.velocity[axis] * -1
+    }
   }
 }
-
 
 //puck.js
 
 //server controls the puck and emits position to players, puck keeps track of scoring points
 class Puck{
   constructor(){
-    this.r = 5
-    this.speed = 5
+    this.r = 5;
+    this.speed = 5;
     this.pos = new Vec2D(rink.center.x,rink.center.y);
-    this.velocity = new Vec2D(this.speed,this.speed)
-    this.winScore = 5
+    this.velocity = new Vec2D(this.speed,this.speed);
+    this.winScore = 5;
   }
   get bounds(){
-    let min = this.pos.subScalar(this.r)
-    let max = this.pos.addScalar(this.r)
-    return {min:min, max:max}
+    return {min:this.pos.subScalar(this.r), max:this.pos.addScalar(this.r)};
   }
   pongMovement(){
     this.pos = this.pos.add(this.velocity);
@@ -162,29 +151,29 @@ class Puck{
   pongScore(){
     //if player 2 scores goal
     if (puck.pos.x < rink.line.hGoal){
-      allClients[1].score++
+      allClients[1].score++;
       if (allClients[1].score >= this.winScore){
-        io.emit("winUpdate", "Player 2")
-        gameState.switchState(gameState.state[3])
+        io.emit("winUpdate", "Player 2");
+        gameState.switchState(gameState.state[3]);
       }
       else{
         scoreUpdate();
-        puck.pos = new Vec2D(rink.center.x,rink.center.y)        
-      }
+        puck.pos = new Vec2D(rink.center.x,rink.center.y);
+      };
     }
     //if player 1 scores goal
     else if (puck.pos.x > rink.line.aGoal){
-      allClients[0].score++
+      allClients[0].score++;
       if (allClients[0].score >= this.winScore){
-        io.emit("winUpdate", "Player 1")
-        gameState.switchState(gameState.state[3])
+        io.emit("winUpdate", "Player 1");
+        gameState.switchState(gameState.state[3]);
       }
       else{
-        scoreUpdate()
+        scoreUpdate();
         puck.pos = new Vec2D(rink.center.x,rink.center.y)
-      }
-    }
-  }
+      };
+    };
+  };
   pongRun(){
     edgeCollision(this);
     this.pongMovement();
@@ -200,9 +189,9 @@ class Puck{
 //on state change, endState fires once, then beginstate fires once, then update runs
 class GameState{
   constructor(){
-    this.state = ["startMenu", "pongRun", "score", "winState"]
+    this.state = ["startMenu", "pongRun", "score", "winState"];
     this._state;
-    this.timer ={menu:false}
+    this.timer ={menu:false};
   }
 
   //start() USE THE INIT TO START
@@ -248,19 +237,19 @@ class GameState{
         //this.startMenuRun();
         if (!this.timer.menu){
           if (allClients[1]){
-            console.log("if both players are in")
+            console.log("if both players are in");
             setTimeout(()=>{
-              io.emit("stateChange", "pongRun")
+              io.emit("stateChange", "pongRun");
 
-              this.switchState(this.state[1])}, 5000)
-            this.timer.menu = true
+              this.switchState(this.state[1])}, 5000);
+            this.timer.menu = true;
           }
           else{
-            console.log("check every 5 seconds")
+            console.log("check every 5 seconds");
             gameState.timer.menu = true;
-            setTimeout(()=>{this.timer.menu=false}, 5000)
-          }
-        }
+            setTimeout(()=>{this.timer.menu=false}, 5000);
+          };
+        };
 
 
       break;
@@ -279,16 +268,16 @@ class GameState{
         //this.winStateRun();
         if(allClients[1]){
           if (allClients[0].restart && allClients[1].restart){
-            io.emit("stateChange", "startMenu")
-            gameState.switchState(gameState.state[0])
-          }          
+            io.emit("stateChange", "startMenu");
+            gameState.switchState(gameState.state[0]);
+          };          
         }
         else if(allClients[0]){
           io.emit("stateChange", "startMenu");
-          gameState.switchState(gameState.state[0])
+          gameState.switchState(gameState.state[0]);
         }
         else {
-          gameState.switchState(gameState.state[0])          
+          gameState.switchState(gameState.state[0]);          
         }
       break;
     }
@@ -310,15 +299,16 @@ class GameState{
 
       case this.state[3]:
         //this.winStateEnd();
+        //REWRITE
         if(allClients[1]){
-          allClients[1].score = 0
-          allClients[1].restart = false
-          allClients[0].score = 0
-          allClients[0].restart = false
+          for (const client of allClients){
+            client.score = 0;
+            client.restart = false
+          }
         }
         else if(allClients[0]){
-          allClients[0].score = 0
-          allClients[0].restart = false
+          allClients[0].score = 0;
+          allClients[0].restart = false;
         }
       break;
     }
@@ -335,11 +325,11 @@ const gameState = new GameState();
 
 function init(){
   gameState.switchState(gameState.state[0]);
-}
+};
 
 function gameRun(){
-  gameState.update()
+  gameState.update();
 }
 
-init()
+init();
 setInterval(gameRun, 16.6);
